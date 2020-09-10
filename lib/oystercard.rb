@@ -7,9 +7,10 @@ class Oystercard
   MINIMUM_BALANCE = 1
   MINIMUM_CHARGE = 1
 
-  def initialize(balance = 0)
+  def initialize(balance = 0, journey = Journey.new)
     @balance = balance
     @history = []
+    @journey = journey
   end
 
   def top_up(amount)
@@ -18,7 +19,7 @@ class Oystercard
   end
   
   def touch_in(entry_station)
-    @journey = Journey.new(entry_station)
+    @history <<  @journey.start(entry_station)
     raise "Minimum amount to travel is £1" if @balance < MINIMUM_BALANCE
   end
 
