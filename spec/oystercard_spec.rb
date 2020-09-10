@@ -15,9 +15,10 @@ describe Oystercard do
   end
 
   it "touching in and out creates one journey" do
-    card = Oystercard.new(1)
+    card = Oystercard.new(10)
     card.touch_in(entry_station)
     card.touch_out(exit_station)
+    card.touch_in(entry_station)
     expect(card.history).not_to be_empty
   end
 
@@ -33,26 +34,16 @@ describe Oystercard do
   end
 
   describe "#touch_in" do
-    it "sets the card status to be on a journey" do
-      card = Oystercard.new(30)
-      card.touch_in(entry_station)
-      expect(card.in_journey?).to be true
-    end
 
     it "raises an error after touch in method when balance is less than 1" do
       card = Oystercard.new(0)
-      expect{card.touch_in(entry_station)}.to raise_error "Minimum amount to travel is £1"
+      expect{card.touch_in(entry_station)}.to raise_error "Minimum amount to travel is GBP1"
     end 
 
   end
 
   describe "#touch_out" do
-    it "sets the card status to NOT be on a journey" do
-      card = Oystercard.new(30)
-      card.touch_in(entry_station)
-      card.touch_out(exit_station)
-      expect(card.in_journey?).to be false
-    end
+ 
 
     it "will deduct minimum fare from the balance" do
       subject.top_up(1)
@@ -64,14 +55,18 @@ describe Oystercard do
       subject.top_up(1)
       subject.touch_in(entry_station)
       subject.touch_out(exit_station)
-      expect(subject.journey).to eq nil
+      expect{subject.touch_in(entry_station)}.to raise_error "Minimum amount to travel is GBP1"
+      expect(subject.current_trip).to eq nil
+      
+      
     end
 
     it "Entry and exit stations added to journey list" do
       card = Oystercard.new(10)
       card.touch_in("Kings Cross")
       card.touch_out("Liverpool Street")
-      expect(card.history).to eq([{"Kings Cross" => "Liverpool Street"}])
+      card.touch_in("Bank")
+      expect(card.history).to eq([{"entry_station" => "Kings Cross", "exit_station" => "Liverpool Street"}])
     end
 
   end
