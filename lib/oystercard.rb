@@ -20,18 +20,17 @@ class Oystercard
   end
 
   def touch_in(entry_station)
-    no_touch_out
+    did_not_touch_out
     raise "Minimum amount to travel is GBP1" if @balance < MINIMUM_BALANCE
     @journey.start(entry_station)
-    @current_trip = @journey.journey_progress
+    store_current_trip
   end
 
-  # @history
   def touch_out(exit_station)
     @journey.finish(exit_station)
-    @current_trip = @journey.journey_progress
+    store_current_trip
     deduct(journey.fare)
-    #@journey = nil
+    sucessfull_trip
   end
 
   private
@@ -46,7 +45,17 @@ class Oystercard
     journey.reset_hash
   end
 
-  def no_touch_out
+  def sucessfull_trip
+    if current_trip["entry_station"] != nil && current_trip["exit_station"] != nil
+      journey_reset
+    end
+  end
+
+  def store_current_trip
+    @current_trip = @journey.journey_progress
+  end
+
+  def did_not_touch_out
     if @current_trip != nil
       if current_trip["entry_station"] != nil && current_trip["exit_station"] == nil
         deduct(journey.fare)
