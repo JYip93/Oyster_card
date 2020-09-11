@@ -10,9 +10,21 @@ class JourneyLog
 
   def start(entry_station)
     @journey.start(entry_station)
+    
+  end
+
+  def finish(exit_station)
+    @journey.finish(exit_station)
   end
 
   def store_journey
     @current_trip = @journey.journey_progress
   end
+
+  def fare
+    @journey.fare
+  end
 end
+
+
+

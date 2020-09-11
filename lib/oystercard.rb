@@ -13,6 +13,7 @@ class Oystercard
     @history = []
     @current_trip = nil
     @journeylog = journeylog
+
   end
 
   def top_up(amount)
@@ -28,9 +29,10 @@ class Oystercard
   end
 
   def touch_out(exit_station)
-    @journey.finish(exit_station)
+    @journeylog.finish(exit_station)
     @journeylog.store_journey
-    deduct(journey.fare)
+    deduct(@journeylog.fare)
+    p @current_trip
     sucessfull_trip
   end
 
