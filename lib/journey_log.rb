@@ -1,11 +1,12 @@
 require_relative "journey"
 
 class JourneyLog
-  attr_reader :journey
+  attr_reader :journey, :current_trip, :history
 
   def initialize(journey = Journey.new)
     @journey = journey
     @current_trip = nil
+    @history = []
   end
 
   def start(entry_station)

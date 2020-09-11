@@ -2,7 +2,7 @@ require_relative "journey"
 require_relative "journey_log"
 
 class Oystercard
-  attr_reader :balance, :entry_station, :exit_station, :history, :journey, :current_trip
+  attr_reader :balance, :entry_station, :exit_station, :journey
 
   LIMIT = 90
   MINIMUM_BALANCE = 1
@@ -10,8 +10,6 @@ class Oystercard
 
   def initialize(balance = 0, journeylog = JourneyLog.new)
     @balance = balance
-    @history = []
-    @current_trip = nil
     @journeylog = journeylog
 
   end
@@ -32,7 +30,6 @@ class Oystercard
     @journeylog.finish(exit_station)
     @journeylog.store_journey
     deduct(@journeylog.fare)
-    p @current_trip
     sucessfull_trip
   end
 
@@ -43,13 +40,13 @@ class Oystercard
   end
 
   def journey_reset
-    @history << current_trip
-    @current_trip = nil
-    journey.reset_hash
+    @journeylog.history << @journeylog.current_trip
+    @journeylog.current_trip = nil
+    @journeylog.journey.reset_hash
   end
 
   def sucessfull_trip
-    if current_trip["entry_station"] != nil && current_trip["exit_station"] != nil
+    if @journeylog.current_trip["entry_station"] != nil && @journeylog.current_trip["exit_station"] != nil
       journey_reset
     end
   end
@@ -59,9 +56,9 @@ class Oystercard
   #end
 
   def did_not_touch_out
-    if @current_trip != nil
-      if current_trip["entry_station"] != nil && current_trip["exit_station"] == nil
-        deduct(journey.fare)
+    if @journeylog.current_trip != nil
+      if @journeylog.current_trip["entry_station"] != nil && @journeylog.current_trip["exit_station"] == nil
+        deduct(@journeylog.journey.fare)
         journey_reset
       else
         journey_reset
